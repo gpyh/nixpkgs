@@ -111,9 +111,9 @@ let
     }@args: let
       url = args.url or "${urlPrefix}/${mkUrlName args}.tar.xz";
       urlPrefix = args.urlPrefix or
-        ("${mirror}/pub/tex/historic/systems/texlive/${bin.texliveYear}/tlnet-final/archive");
+        ("${mirror}/historic/systems/texlive/${bin.texliveYear}/tlnet-final/archive");
       # beware: standard mirrors http://mirror.ctan.org/ don't have releases
-      mirror = "http://ftp.math.utah.edu"; # ftp://tug.ctan.org no longer works, although same IP
+      mirror = "ftp://tug.org"; # ftp://tug.ctan.org no longer works, although same IP
     in
       rec {
         src = fetchurl { inherit url md5; };

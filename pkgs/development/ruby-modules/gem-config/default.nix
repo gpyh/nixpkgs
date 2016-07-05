@@ -98,6 +98,10 @@ in
       "--with-exslt-lib=${libxslt.out}/lib"
       "--with-exslt-include=${libxslt.dev}/include"
     ] ++ lib.optional stdenv.isDarwin "--with-iconv-dir=${libiconv}";
+
+    buildInputs = [
+      zlib libxml2 libxslt
+    ] ++ lib.optional stdenv.isDarwin libiconv;
   };
 
   patron = attrs: {
