@@ -105,17 +105,58 @@ in
 
   config = mkIf cfg.enable {
 
-    programs.zsh = {
+    environment.etc."zshenv".text =
+      ''
+        # /etc/zshenv: DO NOT EDIT -- this file has been generated automatically.
+        # This file is read for all shells.
 
-      shellInit = ''
+        # Only execute this file once per shell.
+        # But don't clobber the environment of interactive non-login children!
+        if [ -n "$__ETC_ZSHENV_SOURCED" ]; then return; fi
+        export __ETC_ZSHENV_SOURCED=1
+
         . ${config.system.build.setEnvironment}
 
         ${cfge.shellInit}
+
+        ${cfg.shellInit}
+
+        # Read system-wide modifications.
+        if test -f /etc/zshenv.local; then
+          . /etc/zshenv.local
+        fi
       '';
 
-      loginShellInit = cfge.loginShellInit;
+    environment.etc."zprofile".text =
+      ''
+        # /etc/zprofile: DO NOT EDIT -- this file has been generated automatically.
+        # This file is read for login shells.
 
-      interactiveShellInit = ''
+        # Only execute this file once per shell.
+        if [ -n "$__ETC_ZPROFILE_SOURCED" ]; then return; fi
+        __ETC_ZPROFILE_SOURCED=1
+      
+        ${cfge.loginShellInit}
+
+        ${cfg.loginShellInit}
+
+        # Read system-wide modifications.
+        if test -f /etc/zprofile.local; then
+          . /etc/zprofile.local
+        fi
+      '';
+
+    environment.etc."zshrc".text =
+      ''
+        # /etc/zshrc: DO NOT EDIT -- this file has been generated automatically.
+        # This file is read for interactive shells.
+
+        # Only execute this file once per shell.
+        if [ -n "$__ETC_ZSHRC_SOURCED" -o -n "$NOSYSZSHRC" ]; then return; fi
+        __ETC_ZSHRC_SOURCED=1
+
+        . /etc/zinputrc
+
         # history defaults
         SAVEHIST=2000
         HISTSIZE=2000
@@ -139,63 +180,14 @@ in
         }
 
         ${zshAliases}
-        ${cfg.promptInit}
 
         ${cfge.interactiveShellInit}
 
-
         HELPDIR="${pkgs.zsh}/share/zsh/$ZSH_VERSION/help"
-      '';
-
-    };
-
-    environment.etc."zshenv".text =
-      ''
-        # /etc/zshenv: DO NOT EDIT -- this file has been generated automatically.
-        # This file is read for all shells.
-
-        # Only execute this file once per shell.
-        # But don't clobber the environment of interactive non-login children!
-        if [ -n "$__ETC_ZSHENV_SOURCED" ]; then return; fi
-        export __ETC_ZSHENV_SOURCED=1
-
-        ${cfg.shellInit}
-
-        # Read system-wide modifications.
-        if test -f /etc/zshenv.local; then
-          . /etc/zshenv.local
-        fi
-      '';
-
-    environment.etc."zprofile".text =
-      ''
-        # /etc/zprofile: DO NOT EDIT -- this file has been generated automatically.
-        # This file is read for login shells.
-
-        # Only execute this file once per shell.
-        if [ -n "$__ETC_ZPROFILE_SOURCED" ]; then return; fi
-        __ETC_ZPROFILE_SOURCED=1
-
-        ${cfg.loginShellInit}
-
-        # Read system-wide modifications.
-        if test -f /etc/zprofile.local; then
-          . /etc/zprofile.local
-        fi
-      '';
-
-    environment.etc."zshrc".text =
-      ''
-        # /etc/zshrc: DO NOT EDIT -- this file has been generated automatically.
-        # This file is read for interactive shells.
-
-        # Only execute this file once per shell.
-        if [ -n "$__ETC_ZSHRC_SOURCED" -o -n "$NOSYSZSHRC" ]; then return; fi
-        __ETC_ZSHRC_SOURCED=1
-
-        . /etc/zinputrc
 
         ${cfg.interactiveShellInit}
+
+        ${cfg.promptInit}
 
         # Read system-wide modifications.
         if test -f /etc/zshrc.local; then
